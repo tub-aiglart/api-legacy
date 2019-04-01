@@ -17,5 +17,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.utils;
 
+
+import org.apache.logging.log4j.LogManager;
+
+public class Logger {
+
+    public static org.apache.logging.log4j.Logger getLogger() {
+        var callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        return LogManager.getLogger(callerClass);
+    }
+}

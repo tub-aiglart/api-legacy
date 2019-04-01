@@ -17,5 +17,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.controllers
 
+import com.tub_aiglart.api.API
+import io.javalin.Context
+import org.bson.Document
+
+class AddImageController(api: API) : Controller(api) {
+
+    override fun handle(ctx: Context) {
+        api.database.images.insertOne(Document("x", 2))
+    }
+}

@@ -1,8 +1,3 @@
-rest:
-  port: 1943
-
-db:
-  port: 1945
-  host: 91.200.102.167
-  password: cCdNKZax0UdJmPOqotHgwcv7azgWkgepNgc6Xj69IhAsioxerTEllLbRrV8k1q8h
-  username: tub
+rest: {port: 1945}
+db: {port: 27017, host: 91.200.102.167, password: cCdNKZax0UdJmPOqotHgwcv7azgWkgepNgc6Xj69IhAsioxerTEllLbRrV8k1q8h,
+  username: root}

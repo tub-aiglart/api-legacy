@@ -17,5 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.controllers
 
+import com.tub_aiglart.api.API
+import io.javalin.Context
+
+class ImagesController(api: API) : Controller(api) {
+
+    override fun handle(ctx: Context) {
+        api.database.images.find()
+    }
+}
