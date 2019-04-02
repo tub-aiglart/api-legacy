@@ -43,7 +43,6 @@ class API(args: CommandLine) {
     private val removeImageController = RemoveImageController(this)
 
     init {
-        log.info("Connecting to Database ...")
         this.database = Database(this.config)
         this.app = Javalin.create().start(this.config.get(Config.REST_PORT))
                 .get("images") { imagesController.handle(it) }

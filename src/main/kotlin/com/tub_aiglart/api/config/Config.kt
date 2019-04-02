@@ -33,7 +33,7 @@ class Config(private val config: FileConfig) : Config {
         const val DB_PASSWORD = "db.password"
     }
 
-    constructor(path: String): this(FileConfig.of(path))
+    constructor(path: String) : this(FileConfig.of(path))
 
     init {
         val file = config.file
@@ -49,7 +49,7 @@ class Config(private val config: FileConfig) : Config {
     }
 
     private fun setDefault(key: String, value: Any) {
-        if(!super.contains(key)) {
+        if (!super.contains(key)) {
             super.add(key, value)
         }
     }
