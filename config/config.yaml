@@ -1,3 +1,3 @@
-rest: {port: 1945}
-db: {port: 27017, host: 91.200.102.167, password: cCdNKZax0UdJmPOqotHgwcv7azgWkgepNgc6Xj69IhAsioxerTEllLbRrV8k1q8h,
-     username: root}
+rest: {port: 1945, token: gXhs8cP8Gc0EBinNZJ6oVGxrK3cvbCwDw7r5iRzBgke0fsQVnt6mcUsF07Ywwfqw}
+db: {host: 91.200.102.167, password: cCdNKZax0UdJmPOqotHgwcv7azgWkgepNgc6Xj69IhAsioxerTEllLbRrV8k1q8h,
+     username: tub, keyspace: tub}

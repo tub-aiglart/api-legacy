@@ -20,9 +20,27 @@
 package com.tub_aiglart.api.controllers
 
 import com.tub_aiglart.api.API
+import com.tub_aiglart.api.config.Config
+import com.tub_aiglart.api.entities.RestError
 import io.javalin.Context
 
 abstract class Controller(val api: API) {
 
     abstract fun handle(ctx: Context)
+
+    fun Context.authorize(action: (ctx: Context) -> Unit) {
+        if (this.header("Authorization") == api.config[Config.REST_TOKEN]) {
+            action(this)
+        } else {
+            this.status(403)
+            this.json(
+                    RestError(
+                            403,
+                            "Unauthorized",
+                            "The provided token was invalid"
+                    )
+            )
+        }
+    }
 }
+

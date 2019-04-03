@@ -19,21 +19,37 @@
 
 package com.tub_aiglart.api.database
 
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
+import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.CodecRegistry
+import com.datastax.driver.core.PlainTextAuthProvider
+import com.datastax.driver.core.Session
+import com.datastax.driver.mapping.MappingManager
 import com.tub_aiglart.api.config.Config
-import org.bson.Document
 
-class Database(config: Config) {
+class Database(
+        config: Config,
+        val keyspace: String
+) {
 
-    private val client: MongoClient = MongoClients.create(String.format("mongodb://%s:%s@%s:%s", config.get(Config.DB_USERNAME), config.get(Config.DB_PASSWORD), config.get(Config.DB_HOST), config.get(Config.DB_PORT)))
-    private val database: MongoDatabase
-    val images: MongoCollection<Document>
+    companion object {
+        @JvmStatic
+        lateinit var instance: Database
+    }
+
+    val cluster: Cluster
+    val codecRegistry = CodecRegistry()
+    val session: Session
+    val mappingManager: MappingManager
 
     init {
-        database = client.getDatabase("tub")
-        images = database.getCollection("images")
+        instance = this
+        cluster = Cluster.builder()
+                .addContactPoints(config.get<String>(Config.DB_HOST))
+                .withAuthProvider(PlainTextAuthProvider(config.get(Config.DB_USERNAME), config.get(Config.DB_PASSWORD)))
+                .withCodecRegistry(codecRegistry)
+                .build()
+
+        session = cluster.connect(keyspace)
+        mappingManager = MappingManager(session)
     }
 }

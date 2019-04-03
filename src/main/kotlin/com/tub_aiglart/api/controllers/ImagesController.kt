@@ -25,6 +25,7 @@ import io.javalin.Context
 class ImagesController(api: API) : Controller(api) {
 
     override fun handle(ctx: Context) {
-        api.database.images.find()
+        ctx.authorize {
+        }
     }
 }

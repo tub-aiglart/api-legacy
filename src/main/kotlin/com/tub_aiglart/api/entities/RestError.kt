@@ -17,13 +17,10 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.entities
 
-import com.tub_aiglart.api.API
-import io.javalin.Context
-
-class AddImageController(api: API) : Controller(api) {
-
-    override fun handle(ctx: Context) {
-    }
-}
+data class RestError(
+        val code: Int,
+        val error: String,
+        val description: String
+)

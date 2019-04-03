@@ -33,7 +33,7 @@ class API(args: CommandLine) {
 
     private val log = Logger.getLogger()
 
-    private val config: Config = Config("config/config.yaml")
+    val config: Config = Config("config/config.yaml")
     val database: Database
     private val app: Javalin
 
@@ -43,11 +43,11 @@ class API(args: CommandLine) {
     private val removeImageController = RemoveImageController(this)
 
     init {
-        this.database = Database(this.config)
-        this.app = Javalin.create().start(this.config.get(Config.REST_PORT))
+        this.database = Database(this.config, this.config[Config.DB_KEYSPACE])
+        this.app = Javalin.create().start(this.config[Config.REST_PORT])
                 .get("images") { imagesController.handle(it) }
                 .post("images") { addImageController.handle(it) }
-                .patch("images/:id") { editImageController.handle(it) }
-                .delete("images/:id") { removeImageController.handle(it) }
+                .patch("images") { editImageController.handle(it) }
+                .delete("images") { removeImageController.handle(it) }
     }
 }
