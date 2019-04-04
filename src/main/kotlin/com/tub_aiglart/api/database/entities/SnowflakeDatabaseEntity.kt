@@ -17,30 +17,21 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.database.entities
 
-import com.tub_aiglart.api.API
-import com.tub_aiglart.api.config.Config
-import com.tub_aiglart.api.entities.RestError
-import io.javalin.Context
+import com.datastax.driver.mapping.annotations.Column
+import com.datastax.driver.mapping.annotations.PartitionKey
+import com.fasterxml.jackson.annotation.JsonProperty
 
-abstract class Controller(val api: API) {
+abstract class SnowflakeDatabaseEntity<T>(): DatabaseEntity<T>(), Snowflake {
 
-    abstract fun handle(ctx: Context)
+    @PartitionKey
+    @Column(name = "id")
+    @JsonProperty("id")
+    override var idLong: Long = -1
 
-    fun Context.authorize(action: (ctx: Context) -> Unit) {
-        if (this.header("Authorization") == api.config[Config.REST_TOKEN]) {
-            action(this)
-        } else {
-            this.status(403)
-            this.json(
-                    RestError(
-                            403,
-                            "Unauthorized",
-                            "The provided token was invalid"
-                    )
-            )
-        }
+    @Suppress("ConvertSecondaryConstructorToPrimary", "LeakingThis")
+    constructor(id: Long): this() {
+        this.idLong = id
     }
 }
-

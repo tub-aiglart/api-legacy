@@ -21,25 +21,37 @@ package com.tub_aiglart.api.controllers
 
 import com.tub_aiglart.api.API
 import com.tub_aiglart.api.config.Config
+import com.tub_aiglart.api.database.entities.User
 import io.javalin.Context
+import org.json.JSONObject
 
-object ImagesController {
+object UsersController {
 
     private val api = API.instance
 
-    fun getImages(ctx: Context) {
+    fun getUsers(ctx: Context) {
         ctx.result(String.format("test %s", api.config[Config.DB_HOST]))
     }
 
-    fun addImage(ctx: Context) {
+    fun getUser(ctx: Context) {
+        ctx.result(String.format("test %s", api.config[Config.DB_HOST]))
+    }
+
+    fun addUser(ctx: Context) {
         ctx.result("Adding")
     }
 
-    fun editImage(ctx: Context) {
+    fun editUser(ctx: Context) {
         ctx.result("Editing")
     }
 
-    fun deleteImage(ctx: Context) {
+    fun deleteUser(ctx: Context) {
         ctx.result("Deleting")
+    }
+
+    fun authorizeUser(ctx: Context) {
+        val username = JSONObject(ctx.body()).getString("username")
+        val user = (API.instance.userCache.accessor as User.Accessor).get(username).one()
+        ctx.json(user)
     }
 }

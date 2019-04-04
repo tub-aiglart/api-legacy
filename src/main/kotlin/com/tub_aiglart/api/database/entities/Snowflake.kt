@@ -17,13 +17,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.database.entities
 
-import com.tub_aiglart.api.API
-import io.javalin.Context
+import com.datastax.driver.mapping.annotations.Transient
+import com.fasterxml.jackson.annotation.JsonIgnore
 
-class EditImageController(api: API) : Controller(api) {
+interface Snowflake {
 
-    override fun handle(ctx: Context) {
-    }
+    val idLong: Long
+
+    val id: String
+    @JsonIgnore @Transient get() = idLong.toString()
 }

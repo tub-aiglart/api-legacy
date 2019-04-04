@@ -19,11 +19,5 @@
 
 package com.tub_aiglart.api.controllers
 
-import com.tub_aiglart.api.API
-import io.javalin.Context
-
-class RemoveImageController(api: API) : Controller(api) {
-
-    override fun handle(ctx: Context) {
-    }
+object AuthController {
 }

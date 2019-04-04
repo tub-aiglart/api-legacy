@@ -26,10 +26,7 @@ import com.datastax.driver.core.Session
 import com.datastax.driver.mapping.MappingManager
 import com.tub_aiglart.api.config.Config
 
-class Database(
-        config: Config,
-        val keyspace: String
-) {
+class Database(config: Config, val keyspace: String) {
 
     companion object {
         @JvmStatic

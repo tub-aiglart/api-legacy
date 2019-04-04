@@ -43,6 +43,7 @@ dependencies {
     compile("org.apache.logging.log4j:log4j-api:2.11.2")
     compile("org.apache.logging.log4j:log4j-core:2.11.2")
     compile("org.apache.logging.log4j:log4j-slf4j-impl:2.11.2")
+    compile("xyz.downgoon:snowflake:1.0.0")
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     testCompile("junit", "junit", "4.12")

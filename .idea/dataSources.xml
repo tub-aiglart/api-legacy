@@ -5,7 +5,7 @@
       <driver-ref>cassandra</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.CassandraJdbcDriver</jdbc-driver>
-      <jdbc-url>jdbc:cassandra://91.200.102.167:32898/tub</jdbc-url>
+      <jdbc-url>jdbc:cassandra://91.200.102.167:9042/tub</jdbc-url>
     </data-source>
   </component>
 </project>

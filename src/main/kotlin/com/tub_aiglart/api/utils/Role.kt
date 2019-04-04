@@ -17,13 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.utils
 
-import com.tub_aiglart.api.API
-import io.javalin.Context
+import io.javalin.security.Role
 
-class AddImageController(api: API) : Controller(api) {
+enum class Role : Role {
 
-    override fun handle(ctx: Context) {
-    }
+    EVERYONE,
+    MANAGER,
+    ADMIN
 }
