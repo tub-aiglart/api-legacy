@@ -24,24 +24,24 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import com.tub_aiglart.api.database.entities.CacheableDatabaseEntity
+import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
-import kotlin.IllegalStateException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-class DatabaseCache<T: CacheableDatabaseEntity<T>>(
+class DatabaseCache<T : CacheableDatabaseEntity<T>>(
         type: KClass<T>,
         accessor: Class<out CacheAccessor<T>>,
         expiry: Long = 10,
         expiryUnit: TimeUnit = TimeUnit.HOURS
 ) {
 
-    val accessor = Database.instance.mappingManager.createAccessor(accessor)
+    val accessor = Database.instance.mappingManager.createAccessor(accessor)!!
     private val cache: LoadingCache<Long, T> = CacheBuilder.newBuilder()
             .expireAfterWrite(expiry, expiryUnit)
-            .build(object: CacheLoader<Long, T>() {
+            .build(object : CacheLoader<Long, T>() {
                 override fun load(key: Long): T {
                     val result = this@DatabaseCache.accessor.get(key)
                     val entity = if (result.availableWithoutFetching > 0) {
@@ -58,14 +58,20 @@ class DatabaseCache<T: CacheableDatabaseEntity<T>>(
     init {
         val primaryConstructor = type.findAnnotation<CacheConstructor>()
         constructor = if (primaryConstructor != null) {
-            type.primaryConstructor?: throw IllegalStateException("Class annotation does only support primary constructors")
+            type.primaryConstructor
+                    ?: throw IllegalStateException("Class annotation does only support primary constructors")
         } else {
-            type.constructors.firstOrNull { it.findAnnotation<CacheConstructor>() != null } ?: throw IllegalStateException("Could not find @CacheConstructor")
+            type.constructors.firstOrNull { it.findAnnotation<CacheConstructor>() != null }
+                    ?: throw IllegalStateException("Could not find @CacheConstructor")
         }
     }
 
     operator fun get(id: Long): T {
         return cache[id]
+    }
+
+    fun getAll(): ConcurrentMap<Long, T> {
+        return cache.asMap()
     }
 
     fun update(entity: T) {

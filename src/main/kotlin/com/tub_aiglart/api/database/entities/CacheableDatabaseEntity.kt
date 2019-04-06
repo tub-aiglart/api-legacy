@@ -24,12 +24,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.tub_aiglart.api.database.DatabaseCache
 import java.util.concurrent.CompletionStage
 
-abstract class CacheableDatabaseEntity<T : CacheableDatabaseEntity<T>>(id: Long = -1): SnowflakeDatabaseEntity<T>(id) {
+abstract class CacheableDatabaseEntity<T : CacheableDatabaseEntity<T>>(id: Long = -1) : SnowflakeDatabaseEntity<T>(id) {
 
     @Suppress("ProtectedInFinal")
     @Transient
     @JsonIgnore
-    lateinit var cache: DatabaseCache<T>
+    open lateinit var cache: DatabaseCache<T>
 
     @Suppress("UNCHECKED_CAST")
     override fun save(): CompletionStage<Void> {

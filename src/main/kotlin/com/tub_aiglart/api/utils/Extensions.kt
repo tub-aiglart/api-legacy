@@ -17,19 +17,19 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.database.entities
+package com.tub_aiglart.api.utils
 
-import com.datastax.driver.mapping.annotations.Column
-import com.datastax.driver.mapping.annotations.PartitionKey
+import com.tub_aiglart.api.database.DatabaseCache
+import com.tub_aiglart.api.database.entities.User
+import com.tub_aiglart.api.entities.RestError
+import io.javalin.Context
 
-abstract class SnowflakeDatabaseEntity<T>() : DatabaseEntity<T>(), Snowflake {
+fun DatabaseCache<User>.userAccessor(): User.Accessor {
+    return this.accessor as User.Accessor
+}
 
-    @PartitionKey
-    @Column(name = "id")
-    override var idLong: Long = -1
+val Any?.unit get() = Unit
 
-    @Suppress("ConvertSecondaryConstructorToPrimary", "LeakingThis")
-    constructor(id: Long) : this() {
-        this.idLong = id
-    }
+fun badRequest(ctx: Context) {
+    return ctx.status(400).json(RestError(400, "Bad Request", "")).unit
 }

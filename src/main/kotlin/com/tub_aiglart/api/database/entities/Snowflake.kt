@@ -20,12 +20,11 @@
 package com.tub_aiglart.api.database.entities
 
 import com.datastax.driver.mapping.annotations.Transient
-import com.fasterxml.jackson.annotation.JsonIgnore
 
 interface Snowflake {
 
     val idLong: Long
 
     val id: String
-    @JsonIgnore @Transient get() = idLong.toString()
+        @Transient get() = idLong.toString()
 }

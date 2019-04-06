@@ -17,19 +17,21 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.database.entities
+package com.tub_aiglart.api.database.entities.rest;
 
-import com.datastax.driver.mapping.annotations.Column
-import com.datastax.driver.mapping.annotations.PartitionKey
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tub_aiglart.api.database.entities.Snowflake;
+import org.jetbrains.annotations.NotNull;
 
-abstract class SnowflakeDatabaseEntity<T>() : DatabaseEntity<T>(), Snowflake {
+public interface RestSnowflake extends Snowflake {
 
-    @PartitionKey
-    @Column(name = "id")
-    override var idLong: Long = -1
+    @JsonProperty("id")
+    @Override
+    long getIdLong();
 
-    @Suppress("ConvertSecondaryConstructorToPrimary", "LeakingThis")
-    constructor(id: Long) : this() {
-        this.idLong = id
-    }
+    @JsonIgnore
+    @NotNull
+    @Override
+    String getId();
 }

@@ -17,7 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.utils
 
-object AuthController {
+import xyz.downgoon.snowflake.Snowflake
+
+class Generator(datacenterId: Long, workerId: Long) : Snowflake(datacenterId, workerId) {
+
+    fun generate(): Long {
+        return this.nextId()
+    }
 }

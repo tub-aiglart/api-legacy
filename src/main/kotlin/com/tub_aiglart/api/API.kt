@@ -25,15 +25,24 @@ import com.tub_aiglart.api.controllers.ImagesController
 import com.tub_aiglart.api.controllers.UsersController
 import com.tub_aiglart.api.database.Database
 import com.tub_aiglart.api.database.DatabaseCache
+import com.tub_aiglart.api.database.entities.CacheableDatabaseEntity
+import com.tub_aiglart.api.database.entities.Image
 import com.tub_aiglart.api.database.entities.Snowflake
 import com.tub_aiglart.api.database.entities.User
+import com.tub_aiglart.api.database.entities.rest.RestSnowflake
 import com.tub_aiglart.api.entities.RestError
+import com.tub_aiglart.api.utils.Auth
+import com.tub_aiglart.api.utils.Generator
 import com.tub_aiglart.api.utils.Logger
 import com.tub_aiglart.api.utils.Role
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
+import io.javalin.json.JavalinJackson
 import io.javalin.security.SecurityUtil.roles
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.security.Keys
 import org.apache.commons.cli.CommandLine
+import java.security.Key
 
 class API(args: CommandLine) {
 
@@ -46,37 +55,54 @@ class API(args: CommandLine) {
 
     val config: Config = Config("config/config.yaml")
     private val database: Database
-    private val app: Javalin
+    val app: Javalin
+
+    val key: Key = Keys.secretKeyFor(SignatureAlgorithm.HS512)
+
+    val generator = Generator(1, 1)
 
     val userCache: DatabaseCache<User>
+    val imageCache: DatabaseCache<Image>
 
     init {
         instance = this
+
         database = Database(this.config, this.config[Config.DB_KEYSPACE])
         database.codecRegistry.register(EnumNameCodec(Role::class.java))
+
+        JavalinJackson.getObjectMapper().addMixIn(Snowflake::class.java, RestSnowflake::class.java)
+        JavalinJackson.getObjectMapper().addMixIn(CacheableDatabaseEntity::class.java, CacheableDatabaseEntity::class.java)
+
         userCache = DatabaseCache(User::class, User.Accessor::class.java)
+        imageCache = DatabaseCache(Image::class, Image.Accessor::class.java)
+
         app = Javalin.create().apply {
             accessManager { handler, ctx, permittedRoles ->
                 run {
-                    println(ctx.header("ID"))
                     when {
-                        permittedRoles.contains(Role.EVERYONE) || ctx.header("Authorization") == config[Config.REST_TOKEN] -> handler.handle(ctx)
-                        userCache[java.lang.Long.parseUnsignedLong(ctx.header("ID")!!)].role in permittedRoles -> handler.handle(ctx)
-                        else -> ctx.status(401).json(RestError(403, "Unauthorized", String.format("In order to interact with '%s' you need at least one of these roles: %s", ctx.path(), permittedRoles.joinToString(", ").toLowerCase())))
+                        permittedRoles.contains(Role.EVERYONE) -> handler.handle(ctx)
+                        Auth.validateToken(ctx, permittedRoles) -> handler.handle(ctx)
+                        else -> ctx.status(403).json(RestError(403, "Forbidden", String.format("In order to interact with '%s' you need at least one of these roles: %s", ctx.path(), permittedRoles.joinToString(", ").toLowerCase())))
                     }
                 }
             }
-        }.start(this.config[Config.REST_PORT])
+        }
 
-        User(xyz.downgoon.snowflake.Snowflake(1,1).nextId(), "Schlaubi", "schl@u.bi", "123", Role.MANAGER).save().thenAccept { println("done") }.exceptionally { it.printStackTrace(); null }
+        app.enableCorsForAllOrigins()
+
+        app.start(this.config[Config.REST_PORT])
 
         app.routes {
-            path("images") {
+            path("image") {
                 get(ImagesController::getImages, roles(Role.EVERYONE))
                 post(ImagesController::addImage, roles(Role.ADMIN, Role.MANAGER))
                 patch(ImagesController::editImage, roles(Role.ADMIN, Role.MANAGER))
                 delete(ImagesController::deleteImage, roles(Role.ADMIN, Role.MANAGER))
             }
+
+            get("images", ImagesController::getImages, roles(Role.EVERYONE))
+
+            get("authorize", UsersController::authorizeUser, roles(Role.EVERYONE))
 
             path("user") {
                 get(UsersController::getUser, roles(Role.ADMIN))
@@ -86,8 +112,6 @@ class API(args: CommandLine) {
             }
 
             get("users", UsersController::getUsers, roles(Role.ADMIN))
-
-            get("authorize", UsersController::authorizeUser, roles(Role.EVERYONE))
         }
     }
 }

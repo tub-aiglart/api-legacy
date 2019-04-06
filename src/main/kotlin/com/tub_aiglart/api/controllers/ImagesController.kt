@@ -20,19 +20,39 @@
 package com.tub_aiglart.api.controllers
 
 import com.tub_aiglart.api.API
-import com.tub_aiglart.api.config.Config
+import com.tub_aiglart.api.database.entities.Image
+import com.tub_aiglart.api.utils.badRequest
 import io.javalin.Context
+import java.nio.file.Files
+import java.nio.file.Paths
 
 object ImagesController {
 
-    private val api = API.instance
-
     fun getImages(ctx: Context) {
-        ctx.result(String.format("test %s", api.config[Config.DB_HOST]))
+        ctx.status(200).json(API.instance.imageCache.getAll())
+    }
+
+    fun getImage(ctx: Context) {
+        ctx.json(API.instance.imageCache.getAll())
     }
 
     fun addImage(ctx: Context) {
-        ctx.result("Adding")
+        val file = ctx.uploadedFiles("files").first()
+        val title = ctx.formParam("title") ?: return badRequest(ctx)
+        val description = ctx.formParam("description") ?: return badRequest(ctx)
+        val size = ctx.formParam("size") ?: return badRequest(ctx)
+        val displayed = ctx.formParam("displayed", Boolean::class.java).get()
+        val entry = Image(API.instance.generator.nextId(), title, description, size, displayed)
+        val out = Paths.get("C:\\Users\\oskar\\Desktop\\uploads\\${entry.id}_${entry.title}${file.extension}")
+        val parent = out.parent.toFile()
+        if (!parent.exists()) {
+            parent.mkdirs()
+        }
+        file.content.use {
+            Files.copy(it, out)
+        }
+        entry.save()
+        ctx.status(201).json(entry)
     }
 
     fun editImage(ctx: Context) {

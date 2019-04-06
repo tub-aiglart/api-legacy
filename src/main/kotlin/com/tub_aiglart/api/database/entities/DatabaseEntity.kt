@@ -21,8 +21,6 @@ package com.tub_aiglart.api.database.entities
 
 import com.datastax.driver.core.ConsistencyLevel
 import com.datastax.driver.mapping.Mapper
-import com.datastax.driver.mapping.annotations.Table
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -30,14 +28,11 @@ import com.tub_aiglart.api.database.Database
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executors
-import kotlin.reflect.full.findAnnotation
 
 abstract class DatabaseEntity<T> {
 
     companion object {
-        @JsonIgnore
         private val MAPPER_POOL = mutableMapOf<Class<*>, Mapper<*>>()
-        @JsonIgnore
         private val EXECUTOR = Executors.newCachedThreadPool()
     }
 
@@ -57,7 +52,7 @@ abstract class DatabaseEntity<T> {
     @Suppress("UnstableApiUsage")
     private fun operate(listenableFuture: ListenableFuture<Void>): CompletionStage<Void> {
         val future = CompletableFuture<Void>()
-        Futures.addCallback(listenableFuture, object: FutureCallback<Void> {
+        Futures.addCallback(listenableFuture, object : FutureCallback<Void> {
             override fun onSuccess(result: Void?) {
                 future.complete(result)
             }
@@ -66,7 +61,7 @@ abstract class DatabaseEntity<T> {
                 future.completeExceptionally(t)
             }
 
-        })
+        }, EXECUTOR)
         return future
     }
 
