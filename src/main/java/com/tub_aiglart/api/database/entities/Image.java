@@ -34,6 +34,7 @@ public class Image extends CacheableDatabaseEntity<Image> {
     private String description;
     private String size;
     private boolean displayed;
+    private String extension;
 
     public Image(Long id, String name, String description, String size, boolean displayed) {
         super(id);
@@ -84,12 +85,25 @@ public class Image extends CacheableDatabaseEntity<Image> {
         this.displayed = displayed;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
     @com.datastax.driver.mapping.annotations.Accessor
-    public static interface Accessor extends CacheAccessor<Image> {
+    public interface Accessor extends CacheAccessor<Image> {
         @NotNull
         @Query("SELECT * FROM Images WHERE id = :id")
         @Override
         Result<Image> get(@Param("id") long id);
+
+        @NotNull
+        @Query("SELECT * FROM images")
+        @Override
+        Result<Image> getAll();
 
         @NotNull
         @Query("SELECT * FROM Images WHERE title = :title ALLOW FILTERING")

@@ -23,10 +23,13 @@ import com.tub_aiglart.api.API
 import com.tub_aiglart.api.config.Config
 import com.tub_aiglart.api.database.entities.User
 import com.tub_aiglart.api.entities.RestError
+import com.tub_aiglart.api.enums.Role
+import com.tub_aiglart.api.utils.Auth
 import com.tub_aiglart.api.utils.badRequest
 import com.tub_aiglart.api.utils.unit
 import com.tub_aiglart.api.utils.userAccessor
 import io.javalin.Context
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import java.util.*
 
@@ -63,12 +66,22 @@ object UsersController {
 
         if (user != null) {
             if (ctx.basicAuthCredentials()!!.password != user.password) {
-                ctx.json(RestError(401, "Unauthorized", "The given password is incorrect!"))
+                ctx.status(401).json(RestError(401, "Unauthorized", "The given password is incorrect!"))
             } else {
-                ctx.json(AuthorizeInfo.fromUser(user, Jwts.builder().signWith(API.instance.key).setId(user.id).setIssuer(user.name).setSubject(user.role.toString()).setIssuedAt(Date()).setExpiration(getDate(7)).compact()))
+                ctx.status(200).json(AuthorizeInfo.fromUser(user, Jwts.builder().signWith(API.instance.key).setId(user.id).setIssuer(user.name).setSubject(user.role.toString()).setIssuedAt(Date()).setExpiration(getDate(7)).compact()))
             }
         } else {
-            ctx.json(RestError(404, "Not found", "A user with the specified username was not found!"))
+            ctx.status(404).json(RestError(404, "Not found", "A user with the specified username was not found!"))
+        }
+    }
+
+    fun validateToken(ctx: Context) {
+        val token = ctx.header("Authorization") ?: return badRequest(ctx)
+        try {
+            Jwts.parser().setSigningKey(API.instance.key).parseClaimsJws(token)
+            ctx.status(200).json("200")
+        } catch (e: JwtException) {
+            ctx.status(403).json("403")
         }
     }
 
@@ -81,7 +94,7 @@ object UsersController {
     }
 
     private data class AuthorizeInfo(
-            val id: Long,
+            val id: String,
             val username: String,
             val email: String,
             val token: String
@@ -89,7 +102,7 @@ object UsersController {
         companion object {
             fun fromUser(user: User, token: String): AuthorizeInfo {
                 return AuthorizeInfo(
-                        user.idLong,
+                        user.id,
                         user.name,
                         user.email,
                         token

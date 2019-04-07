@@ -64,6 +64,8 @@ class DatabaseCache<T : CacheableDatabaseEntity<T>>(
             type.constructors.firstOrNull { it.findAnnotation<CacheConstructor>() != null }
                     ?: throw IllegalStateException("Could not find @CacheConstructor")
         }
+        val instances = this.accessor.getAll().all().associateBy { it.idLong }
+        cache.putAll(instances)
     }
 
     operator fun get(id: Long): T {
@@ -75,7 +77,7 @@ class DatabaseCache<T : CacheableDatabaseEntity<T>>(
     }
 
     fun update(entity: T) {
-        cache.refresh(entity.idLong)
+        cache.put(entity.idLong, entity)
     }
 
     fun delete(entity: T) {
@@ -85,6 +87,7 @@ class DatabaseCache<T : CacheableDatabaseEntity<T>>(
 
 interface CacheAccessor<T> {
     fun get(id: Long): Result<T>
+    fun getAll(): Result<T>
 }
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR)

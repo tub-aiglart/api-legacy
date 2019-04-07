@@ -29,12 +29,13 @@ import com.tub_aiglart.api.database.entities.CacheableDatabaseEntity
 import com.tub_aiglart.api.database.entities.Image
 import com.tub_aiglart.api.database.entities.Snowflake
 import com.tub_aiglart.api.database.entities.User
+import com.tub_aiglart.api.database.entities.rest.RestCacheableDatabaseEntity
 import com.tub_aiglart.api.database.entities.rest.RestSnowflake
 import com.tub_aiglart.api.entities.RestError
+import com.tub_aiglart.api.enums.Role
 import com.tub_aiglart.api.utils.Auth
 import com.tub_aiglart.api.utils.Generator
 import com.tub_aiglart.api.utils.Logger
-import com.tub_aiglart.api.utils.Role
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import io.javalin.json.JavalinJackson
@@ -71,12 +72,15 @@ class API(args: CommandLine) {
         database.codecRegistry.register(EnumNameCodec(Role::class.java))
 
         JavalinJackson.getObjectMapper().addMixIn(Snowflake::class.java, RestSnowflake::class.java)
-        JavalinJackson.getObjectMapper().addMixIn(CacheableDatabaseEntity::class.java, CacheableDatabaseEntity::class.java)
+        JavalinJackson.getObjectMapper().addMixIn(CacheableDatabaseEntity::class.java, RestCacheableDatabaseEntity::class.java)
+        // JavalinJackson.getObjectMapper().addMixIn(Image::class.java, RestImage::class.java)
 
         userCache = DatabaseCache(User::class, User.Accessor::class.java)
         imageCache = DatabaseCache(Image::class, Image.Accessor::class.java)
 
         app = Javalin.create().apply {
+            defaultContentType("application/json")
+            disableStartupBanner()
             accessManager { handler, ctx, permittedRoles ->
                 run {
                     when {
@@ -93,25 +97,30 @@ class API(args: CommandLine) {
         app.start(this.config[Config.REST_PORT])
 
         app.routes {
+            get("images", ImagesController::getImages, roles(Role.EVERYONE))
+
             path("image") {
-                get(ImagesController::getImages, roles(Role.EVERYONE))
-                post(ImagesController::addImage, roles(Role.ADMIN, Role.MANAGER))
+                get(ImagesController::getImage, roles(Role.EVERYONE))
+                put(ImagesController::addImage, roles(Role.ADMIN, Role.MANAGER))
                 patch(ImagesController::editImage, roles(Role.ADMIN, Role.MANAGER))
                 delete(ImagesController::deleteImage, roles(Role.ADMIN, Role.MANAGER))
             }
 
-            get("images", ImagesController::getImages, roles(Role.EVERYONE))
-
             get("authorize", UsersController::authorizeUser, roles(Role.EVERYONE))
+            get("validate", UsersController::validateToken, roles(Role.EVERYONE))
 
             path("user") {
                 get(UsersController::getUser, roles(Role.ADMIN))
-                post(UsersController::addUser, roles(Role.ADMIN))
+                put(UsersController::addUser, roles(Role.ADMIN))
                 patch(UsersController::editUser, roles(Role.ADMIN))
                 delete(UsersController::deleteUser, roles(Role.ADMIN))
             }
 
             get("users", UsersController::getUsers, roles(Role.ADMIN))
+        }
+
+        app.exception(Exception::class.java) { e, ctx ->
+            ctx.json(e)
         }
     }
 }

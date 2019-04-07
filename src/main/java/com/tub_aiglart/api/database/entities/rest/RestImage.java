@@ -17,13 +17,16 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.utils
-
-import io.javalin.security.Role
-
-enum class Role : Role {
-
-    EVERYONE,
-    MANAGER,
-    ADMIN
-}
+//package com.tub_aiglart.api.database.entities.rest;
+//
+//import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.tub_aiglart.api.database.entities.Image;
+//
+//public abstract class RestImage extends Image {
+//
+//    @JsonProperty("file_name")
+//    @Override
+//    public String getFileName() {
+//        return super.getFileName();
+//    }
+//}

@@ -25,7 +25,7 @@ import com.datastax.driver.mapping.annotations.Query;
 import com.datastax.driver.mapping.annotations.Table;
 import com.tub_aiglart.api.database.CacheAccessor;
 import com.tub_aiglart.api.database.CacheConstructor;
-import com.tub_aiglart.api.utils.Role;
+import com.tub_aiglart.api.enums.Role;
 import org.jetbrains.annotations.NotNull;
 
 @Table(keyspace = "tub", name = "users")
@@ -86,11 +86,16 @@ public class User extends CacheableDatabaseEntity<User> {
     }
 
     @com.datastax.driver.mapping.annotations.Accessor
-    public static interface Accessor extends CacheAccessor<User> {
+    public interface Accessor extends CacheAccessor<User> {
         @NotNull
         @Query("SELECT * FROM users WHERE id = :id")
         @Override
         Result<User> get(@Param("id") long id);
+
+        @NotNull
+        @Query("SELECT * FROM users")
+        @Override
+        Result<User> getAll();
 
         @NotNull
         @Query("SELECT * FROM users WHERE name = :name ALLOW FILTERING")

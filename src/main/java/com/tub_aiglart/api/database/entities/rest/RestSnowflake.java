@@ -20,18 +20,18 @@
 package com.tub_aiglart.api.database.entities.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.tub_aiglart.api.database.entities.Snowflake;
 import org.jetbrains.annotations.NotNull;
 
 public interface RestSnowflake extends Snowflake {
 
-    @JsonProperty("id")
+    @JsonIgnore
     @Override
     long getIdLong();
 
-    @JsonIgnore
     @NotNull
     @Override
+    @JsonDeserialize(as = String.class)
     String getId();
 }
