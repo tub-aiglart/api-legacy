@@ -17,5 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.utils
 
+import xyz.downgoon.snowflake.Snowflake
+
+class Generator(datacenterId: Long, workerId: Long) : Snowflake(datacenterId, workerId) {
+
+    fun generate(): Long {
+        return this.nextId()
+    }
+}

@@ -17,5 +17,19 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.database.entities
 
+import com.datastax.driver.mapping.annotations.Column
+import com.datastax.driver.mapping.annotations.PartitionKey
+
+abstract class SnowflakeDatabaseEntity<T>() : DatabaseEntity<T>(), Snowflake {
+
+    @PartitionKey
+    @Column(name = "id")
+    override var idLong: Long = -1
+
+    @Suppress("ConvertSecondaryConstructorToPrimary", "LeakingThis")
+    constructor(id: Long) : this() {
+        this.idLong = id
+    }
+}

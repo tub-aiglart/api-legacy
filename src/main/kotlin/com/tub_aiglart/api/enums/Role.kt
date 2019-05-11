@@ -17,5 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.enums
 
+import io.javalin.security.Role
+
+enum class Role : Role {
+
+    EVERYONE,
+    MANAGER,
+    ADMIN
+}

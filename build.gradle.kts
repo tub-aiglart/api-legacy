@@ -1,3 +1,22 @@
+/*
+ * API - A basic REST API made for tub-aiglart.com
+ *
+ * Copyright (C) 2019  Oskar Lang
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see https://www.gnu.org/licenses/.
+ */
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -10,16 +29,43 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 dependencies {
-    compile("org.mongodb:mongodb-driver-sync:3.10.1")
+    /* JAVALIN */
+    compile("io.javalin:javalin:2.8.0")
+
+    /* CASSANDRA */
+    compile("com.datastax.cassandra:cassandra-driver-core:3.6.0")
+    compile("com.datastax.cassandra:cassandra-driver-mapping:3.6.0")
+    compile("com.datastax.cassandra:cassandra-driver-extras:3.6.0")
+
+    /* CONFIG */
     compile("com.electronwill.night-config:yaml:3.5.2")
-    compile("io.javalin", "javalin", "2.8.0")
-    compile ("org.slf4j:slf4j-simple:1.7.26")
+
+    /* JSON */
+    compile("org.json:json:20180813")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.9.8")
+
+    /* CLI */
+    compile("commons-cli:commons-cli:1.4")
+
+    /* LOGGING */
+    compile("org.apache.logging.log4j:log4j-api:2.11.2")
+    compile("org.apache.logging.log4j:log4j-core:2.11.2")
+    compile("org.apache.logging.log4j:log4j-slf4j-impl:2.11.2")
+
+    /* SNOWFLAKE */
+    compile("xyz.downgoon:snowflake:1.0.0")
+
+    /* JWT */
+    compile("io.jsonwebtoken:jjwt-api:0.10.5")
+    runtime("io.jsonwebtoken:jjwt-impl:0.10.5")
+    runtime("io.jsonwebtoken:jjwt-jackson:0.10.5")
+
+    /* STUFF */
     implementation(kotlin("stdlib-jdk8"))
-    implementation ("com.github.Carleslc:Simple-YAML:1.4.1")
+    implementation(kotlin("reflect"))
     testCompile("junit", "junit", "4.12")
 }
 

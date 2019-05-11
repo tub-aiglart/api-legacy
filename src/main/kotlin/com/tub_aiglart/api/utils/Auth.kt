@@ -17,5 +17,25 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.utils
 
+import com.tub_aiglart.api.API
+import com.tub_aiglart.api.enums.Role
+import io.javalin.Context
+import io.jsonwebtoken.JwtException
+import io.jsonwebtoken.Jwts
+
+class Auth {
+
+    companion object {
+
+        fun validateToken(ctx: Context, permittedRoles: Set<io.javalin.security.Role>): Boolean {
+            val token = ctx.header("Authorization") ?: return badRequest(ctx).run { false }
+            return try {
+                Role.valueOf(Jwts.parser().setSigningKey(API.instance.key).parseClaimsJws(token).body.subject) in permittedRoles
+            } catch (e: JwtException) {
+                false
+            }
+        }
+    }
+}

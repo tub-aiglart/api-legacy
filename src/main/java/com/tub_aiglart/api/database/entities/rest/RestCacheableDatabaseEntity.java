@@ -17,5 +17,18 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.database.entities.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tub_aiglart.api.database.DatabaseCache;
+import com.tub_aiglart.api.database.entities.CacheableDatabaseEntity;
+import org.jetbrains.annotations.NotNull;
+
+public abstract class RestCacheableDatabaseEntity<T extends CacheableDatabaseEntity<T>> extends CacheableDatabaseEntity<T> {
+    @JsonIgnore
+    @NotNull
+    @Override
+    public DatabaseCache<T> getCache() {
+        return super.getCache();
+    }
+}

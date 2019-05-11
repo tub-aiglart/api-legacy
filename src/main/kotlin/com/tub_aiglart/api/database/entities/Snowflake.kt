@@ -17,5 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.database.entities
 
+import com.datastax.driver.mapping.annotations.Transient
+
+interface Snowflake {
+
+    val idLong: Long
+
+    val id: String
+        @Transient get() = idLong.toString()
+}

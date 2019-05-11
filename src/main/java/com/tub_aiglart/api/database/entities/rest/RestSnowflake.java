@@ -17,5 +17,21 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'api'
+package com.tub_aiglart.api.database.entities.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.tub_aiglart.api.database.entities.Snowflake;
+import org.jetbrains.annotations.NotNull;
+
+public interface RestSnowflake extends Snowflake {
+
+    @JsonIgnore
+    @Override
+    long getIdLong();
+
+    @NotNull
+    @Override
+    @JsonDeserialize(as = String.class)
+    String getId();
+}

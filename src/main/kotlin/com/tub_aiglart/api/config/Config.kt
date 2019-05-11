@@ -1,29 +1,112 @@
+/*
+ * API - A basic REST API made for tub-aiglart.com
+ *
+ * Copyright (C) 2019  Oskar Lang
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see https://www.gnu.org/licenses/.
+ */
+
 package com.tub_aiglart.api.config
 
-import org.simpleyaml.configuration.file.YamlFile
-import java.nio.file.Files
-import java.nio.file.Paths
+import com.electronwill.nightconfig.core.Config
+import com.electronwill.nightconfig.core.ConfigFormat
+import com.electronwill.nightconfig.core.file.FileConfig
 
-class Config(path: String): YamlFile(path) {
+class Config(private val config: FileConfig) : Config {
+
+    companion object {
+        const val REST_PORT = "rest.port"
+        const val DB_HOST = "db.host"
+        const val DB_USERNAME = "db.username"
+        const val DB_PASSWORD = "db.password"
+        const val DB_KEYSPACE = "db.keyspace"
+        const val CDN_PATH = "cdn.path"
+        const val CDN_EXTENSION = "cdn.extension"
+    }
+
+    constructor(path: String) : this(FileConfig.of(path))
 
     init {
-        if (!Files.exists(Paths.get(path))) {
-            this.createNewFile(true)
-            setDefaults()
-            this.save()
-        } else {
-            this.load()
+        val file = config.file
+        if (!file.exists()) {
+            val parent = file.parentFile
+            if (!parent.exists()) {
+                parent.mkdirs()
+            }
+        }
+        config.load()
+        setDefaults()
+        config.save()
+    }
+
+    private fun setDefault(key: String, value: Any) {
+        if (!super.contains(key)) {
+            super.add(key, value)
         }
     }
 
     private fun setDefaults() {
-        /* REST API CREDENTIALS */
-        set("rest.port", 1337)
+        setDefault(REST_PORT, 1337)
+        setDefault(DB_HOST, 1337)
+        setDefault(DB_USERNAME, "default")
+        setDefault(DB_PASSWORD, "default")
+        setDefault(DB_KEYSPACE, "default")
+        setDefault(CDN_PATH, "default")
+        setDefault(CDN_EXTENSION, "default")
+    }
 
-        /* DATABASE CREDENTIALS */
-        set("db.host", 1337)
-        set("db.port", 1337)
-        set("db.username", "default")
-        set("db.password", "default")
+    override fun clear() {
+        config.clear()
+    }
+
+    override fun <T : Any?> getRaw(path: MutableList<String>?): T {
+        return config.getRaw(path)
+    }
+
+    override fun createSubConfig(): Config {
+        return config.createSubConfig()
+    }
+
+    override fun add(path: MutableList<String>?, value: Any?): Boolean {
+        return config.add(path, value)
+    }
+
+    override fun size(): Int {
+        return config.size()
+    }
+
+    override fun entrySet(): MutableSet<out Config.Entry> {
+        return config.entrySet()
+    }
+
+    override fun <T : Any?> remove(path: MutableList<String>?): T {
+        return config.remove(path)
+    }
+
+    override fun <T : Any?> set(path: MutableList<String>?, value: Any?): T {
+        return config.set(path, value)
+    }
+
+    override fun valueMap(): MutableMap<String, Any> {
+        return config.valueMap()
+    }
+
+    override fun configFormat(): ConfigFormat<*> {
+        return config.configFormat()
+    }
+
+    override fun contains(path: MutableList<String>?): Boolean {
+        return config.contains(path)
     }
 }
