@@ -28,9 +28,11 @@ class Config(private val config: FileConfig) : Config {
     companion object {
         const val REST_PORT = "rest.port"
         const val DB_HOST = "db.host"
-        const val DB_PORT = "db.port"
         const val DB_USERNAME = "db.username"
         const val DB_PASSWORD = "db.password"
+        const val DB_KEYSPACE = "db.keyspace"
+        const val CDN_PATH = "cdn.path"
+        const val CDN_EXTENSION = "cdn.extension"
     }
 
     constructor(path: String) : this(FileConfig.of(path))
@@ -57,9 +59,11 @@ class Config(private val config: FileConfig) : Config {
     private fun setDefaults() {
         setDefault(REST_PORT, 1337)
         setDefault(DB_HOST, 1337)
-        setDefault(DB_PORT, 1337)
         setDefault(DB_USERNAME, "default")
         setDefault(DB_PASSWORD, "default")
+        setDefault(DB_KEYSPACE, "default")
+        setDefault(CDN_PATH, "default")
+        setDefault(CDN_EXTENSION, "default")
     }
 
     override fun clear() {

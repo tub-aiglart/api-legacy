@@ -32,14 +32,40 @@ repositories {
 }
 
 dependencies {
+    /* JAVALIN */
     compile("io.javalin:javalin:2.8.0")
-    compile("org.mongodb:mongodb-driver-sync:3.10.1")
+
+    /* CASSANDRA */
+    compile("com.datastax.cassandra:cassandra-driver-core:3.6.0")
+    compile("com.datastax.cassandra:cassandra-driver-mapping:3.6.0")
+    compile("com.datastax.cassandra:cassandra-driver-extras:3.6.0")
+
+    /* CONFIG */
     compile("com.electronwill.night-config:yaml:3.5.2")
+
+    /* JSON */
+    compile("org.json:json:20180813")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.9.8")
+
+    /* CLI */
     compile("commons-cli:commons-cli:1.4")
+
+    /* LOGGING */
     compile("org.apache.logging.log4j:log4j-api:2.11.2")
     compile("org.apache.logging.log4j:log4j-core:2.11.2")
     compile("org.apache.logging.log4j:log4j-slf4j-impl:2.11.2")
+
+    /* SNOWFLAKE */
+    compile("xyz.downgoon:snowflake:1.0.0")
+
+    /* JWT */
+    compile("io.jsonwebtoken:jjwt-api:0.10.5")
+    runtime("io.jsonwebtoken:jjwt-impl:0.10.5")
+    runtime("io.jsonwebtoken:jjwt-jackson:0.10.5")
+
+    /* STUFF */
     implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
     testCompile("junit", "junit", "4.12")
 }
 

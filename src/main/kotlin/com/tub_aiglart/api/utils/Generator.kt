@@ -17,15 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
+package com.tub_aiglart.api.utils
 
-import com.tub_aiglart.api.API
-import io.javalin.Context
-import org.bson.Document
+import xyz.downgoon.snowflake.Snowflake
 
-class AddImageController(api: API) : Controller(api) {
+class Generator(datacenterId: Long, workerId: Long) : Snowflake(datacenterId, workerId) {
 
-    override fun handle(ctx: Context) {
-        api.database.images.insertOne(Document("x", 2))
+    fun generate(): Long {
+        return this.nextId()
     }
 }

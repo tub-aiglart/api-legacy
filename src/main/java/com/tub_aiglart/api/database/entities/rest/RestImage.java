@@ -17,16 +17,16 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package com.tub_aiglart.api.controllers
-
-import com.mongodb.client.model.Filters.eq
-import com.tub_aiglart.api.API
-import io.javalin.Context
-import org.bson.Document
-
-class EditImageController(api: API) : Controller(api) {
-
-    override fun handle(ctx: Context) {
-        api.database.images.updateOne(eq("x", 5), Document("x", 4))
-    }
-}
+//package com.tub_aiglart.api.database.entities.rest;
+//
+//import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.tub_aiglart.api.database.entities.Image;
+//
+//public abstract class RestImage extends Image {
+//
+//    @JsonProperty("file_name")
+//    @Override
+//    public String getFileName() {
+//        return super.getFileName();
+//    }
+//}
