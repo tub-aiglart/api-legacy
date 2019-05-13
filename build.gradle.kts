@@ -17,10 +17,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
+    application
+    id("com.github.johnrengelman.shadow") version "4.0.4"
     kotlin("jvm") version "1.3.21"
 }
 
@@ -81,4 +84,14 @@ compileKotlin.kotlinOptions {
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
+}
+
+application {
+    mainClassName = "com.tub_aiglart.api.BootstrapperKt"
+}
+
+tasks.withType<ShadowJar> {
+    baseName = "api-$version"
+    classifier = ""
+    version = ""
 }
